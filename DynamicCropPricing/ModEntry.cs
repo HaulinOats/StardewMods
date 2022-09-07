@@ -41,15 +41,15 @@ namespace DynamicCrops
 
         private void GetModeData(string mode)
         {
-            var getObjectData = ModData.getRealisticData();
+            var cropAndObjectData = ModData.getRealisticData();
                
             switch (mode.ToLower())
             {
                 case "even more realistic":
-
+                    cropAndObjectData = ModData.getEvenMoreRealisticData();
                     break;
                 case "dynamic":
-
+                    cropAndObjectData = ModData.getLightweightData();
                     break;
             }
         }
