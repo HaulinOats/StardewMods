@@ -1,5 +1,5 @@
 ﻿{
-  "Name": "DynamicCrops",
+  "Name": "Dynamic Crops",
   "Author": "HaulinOats",
   "Version": "1.0.0",
   "Description": "Dynamically generate various crop and seed properties on each new save, such as sell and purchase prices, harvest times, and even regrowth capability.",
