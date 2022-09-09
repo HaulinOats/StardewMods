@@ -5,7 +5,7 @@ namespace DynamicCrops
 {
     public class ModConfig
     {
-        public string balanceMode { get; set; } = "Realistic";
+        
     }
 }
 

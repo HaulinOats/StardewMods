@@ -4,12 +4,25 @@
     <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <LangVersion>latestmajor</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <LangVersion>latestmajor</LangVersion>
+  </PropertyGroup>
   <ItemGroup>
     <None Remove="Pathoschild.Stardew.ModBuildConfig" />
     <None Remove="assets\" />
+    <None Remove="System.Text.Json" />
+    <None Remove="ShuffleList" />
+    <None Remove="System.Linq" />
+    <None Remove="morelinq" />
+    <None Remove="Newtonsoft.Json" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.0.1" />
+    <PackageReference Include="System.Text.Json" Version="6.0.5" />
+    <PackageReference Include="morelinq" Version="3.3.2" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="assets\" />

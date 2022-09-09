@@ -23,9 +23,9 @@ namespace DynamicCrops
         public override void Entry(IModHelper helper)
         {
             //get values from config
-            this.Config = this.Helper.ReadConfig<ModConfig>();
-            balanceMode = Config.balanceMode;
-            Monitor.Log($"balance mode = {balanceMode}", LogLevel.Debug);
+            //this.Config = this.Helper.ReadConfig<ModConfig>();
+            //balanceMode = Config.balanceMode;
+            //Monitor.Log($"balance mode = {balanceMode}", LogLevel.Debug);
 
             helper.Events.GameLoop.SaveCreated += OnSaveCreation;
             helper.Events.Content.AssetRequested += OnAssetRequested;
@@ -43,51 +43,26 @@ namespace DynamicCrops
         {
             if (e.Name.IsEquivalentTo("TileSheets/crops"))
             {
-                Monitor.Log($"{balanceMode} - accesing crop tilesheet...", LogLevel.Debug);
                 e.LoadFromModFile<Texture2D>("assets/crops.png", AssetLoadPriority.Medium);
-                Monitor.Log("crop spritesheet loaded", LogLevel.Debug);
             }
             if (e.Name.IsEquivalentTo("Data/Crops"))
             {
-                Monitor.Log($"{balanceMode} - accessing crop data...", LogLevel.Debug);
-                switch (balanceMode)
-                {
-                    case "Realistic":
-                        loadModeData(e, "assets/realistic-crop-data.json");
-                        break;
-                    case "More Realistic":
-                        loadModeData(e, "assets/more-realistic-crop-data.json");
-                        break;
-                }
-                Monitor.Log("crop data loaded!", LogLevel.Debug);
+
             }
             if (e.Name.IsEquivalentTo("Data/ObjectInformation"))
             {
-                Monitor.Log($"{balanceMode } - accessing object data...", LogLevel.Debug);
-                switch (balanceMode)
-                {
-                    case "Realistic":
-                        loadModeData(e, "assets/realistic-object-data.json");
-                        break;
-                    case "More Realistic":
-                        loadModeData(e, "assets/more-realistic-object-data.json");
-                        break;
-                    case "Lightweight":
-                        loadModeData(e, "assets/lightweight-object-data.json");
-                        break;
-                }
-                Monitor.Log("object data loaded!", LogLevel.Debug);
+
             }
 
-            void loadModeData(AssetRequestedEventArgs e, string filepath)
-            {
-                e.Edit(asset =>
-                {
-                    var model = Helper.ModContent.Load<Dictionary<int, string>>(filepath);
-                    var data = asset.AsDictionary<int, string>().Data;
-                    foreach (var (k, v) in model) data[k] = v;
-                });
-            }
+            //void loadModeData(AssetRequestedEventArgs e, string filepath)
+            //{
+            //    e.Edit(asset =>
+            //    {
+            //        var model = Helper.ModContent.Load<Dictionary<int, string>>(filepath);
+            //        var data = asset.AsDictionary<int, string>().Data;
+            //        foreach (var (k, v) in model) data[k] = v;
+            //    });
+            //}
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -120,16 +95,16 @@ namespace DynamicCrops
             //);
             //tooltip: () => "An optional description shown as a tooltip to the player.",
 
-            configMenu.AddTextOption(
-                mod: this.ModManifest,
-                name: () => "Balance Mode",
-                getValue: () => this.Config.balanceMode,
-                setValue: value => {
-                    this.Config.balanceMode = value;
-                    balanceMode = value;
-                },
-                allowedValues: new string[] { "Realistic", "More Realistic", "Lightweight", "Dynamic" }
-            );
+            //configMenu.AddTextOption(
+            //    mod: this.ModManifest,
+            //    name: () => "Balance Mode",
+            //    getValue: () => this.Config.balanceMode,
+            //    setValue: value => {
+            //        this.Config.balanceMode = value;
+            //        balanceMode = value;
+            //    },
+            //    allowedValues: new string[] { "Realistic", "More Realistic", "Lightweight", "Dynamic" }
+            //);
         }
     }
 }
