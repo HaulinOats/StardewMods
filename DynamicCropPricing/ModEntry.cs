@@ -14,7 +14,8 @@ namespace DynamicCrops
     public class ModEntry : Mod
     {
         private ModConfig Config;
-        private string balanceMode;
+        private bool flowersCanRegrow;
+        private ModData cropsAndObjectData;
         /*********
         ** Public methods
         *********/
@@ -23,46 +24,73 @@ namespace DynamicCrops
         public override void Entry(IModHelper helper)
         {
             //get values from config
-            //this.Config = this.Helper.ReadConfig<ModConfig>();
-            //balanceMode = Config.balanceMode;
-            //Monitor.Log($"balance mode = {balanceMode}", LogLevel.Debug);
+            this.Config = this.Helper.ReadConfig<ModConfig>();
+            flowersCanRegrow = Config.flowersCanRegrow;
+            Monitor.Log($"flowers can regrow: {flowersCanRegrow}", LogLevel.Debug);
 
             helper.Events.GameLoop.SaveCreated += OnSaveCreation;
             helper.Events.Content.AssetRequested += OnAssetRequested;
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
+            helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
         }
 
         private void OnSaveCreation(object sender, SaveCreatedEventArgs e)
         {
             Monitor.Log($"{Game1.player.Name}'s game has loaded...", LogLevel.Debug);
+            Monitor.Log($"intiating dynamic crop pricing scripts...", LogLevel.Debug);
+            cropsAndObjectData = ModData.initUtility();
+            Monitor.Log($"dynamic crops data created!");
+            Helper.Data.WriteSaveData("crops-object-data", cropsAndObjectData);
+            Monitor.Log("crop and object data saved to save file", LogLevel.Debug);
+        }
 
-            Monitor.Log("... DynamicCrops save file data created", LogLevel.Debug);
+        private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
+        {
+            cropsAndObjectData = Helper.Data.ReadSaveData<ModData>("crops-object-data");
+            Monitor.Log("save file loaded", LogLevel.Debug);
+            Helper.GameContent.InvalidateCache("Data/Crops");
+            Helper.GameContent.InvalidateCache("Data/ObjectInformation");
         }
 
         private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
-            if (e.Name.IsEquivalentTo("TileSheets/crops"))
+            if (Context.IsWorldReady && cropsAndObjectData != null)
             {
-                e.LoadFromModFile<Texture2D>("assets/crops.png", AssetLoadPriority.Medium);
+                if (e.Name.IsEquivalentTo("Data/Crops"))
+                {
+                    Monitor.Log("loading crop data...", LogLevel.Debug);
+                    e.Edit(asset =>
+                    {
+                        var data = asset.AsDictionary<int, string>().Data;
+                        foreach (var item in cropsAndObjectData.CropData)
+                        {
+                            Monitor.Log($"key: {item.Key}, value: {item.Value}", LogLevel.Debug);
+                            data[int.Parse(item.Key)] = item.Value;
+                        }
+                    });
+                    Monitor.Log("crop data loaded", LogLevel.Debug);
+                }
+                if (e.Name.IsEquivalentTo("Data/ObjectInformation"))
+                {
+                    Monitor.Log("loading object data...", LogLevel.Debug);
+                    e.Edit(asset =>
+                    {
+                        var data = asset.AsDictionary<int, string>().Data;
+                        foreach (var item in cropsAndObjectData.ObjectData)
+                        {
+                            Monitor.Log($"key: {item.Key}, value: {item.Value}", LogLevel.Debug);
+                            data[int.Parse(item.Key)] = item.Value;
+                        }
+                    });
+                    Monitor.Log("object data loaded", LogLevel.Debug);
+                }
+                if (e.Name.IsEquivalentTo("TileSheets/crops"))
+                {
+                    Monitor.Log("loading crop tilesheet...", LogLevel.Debug);
+                    e.LoadFromModFile<Texture2D>("assets/crops.png", AssetLoadPriority.Medium);
+                    Monitor.Log("crop tilesheet loaded", LogLevel.Debug);
+                }
             }
-            if (e.Name.IsEquivalentTo("Data/Crops"))
-            {
-
-            }
-            if (e.Name.IsEquivalentTo("Data/ObjectInformation"))
-            {
-
-            }
-
-            //void loadModeData(AssetRequestedEventArgs e, string filepath)
-            //{
-            //    e.Edit(asset =>
-            //    {
-            //        var model = Helper.ModContent.Load<Dictionary<int, string>>(filepath);
-            //        var data = asset.AsDictionary<int, string>().Data;
-            //        foreach (var (k, v) in model) data[k] = v;
-            //    });
-            //}
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -79,13 +107,19 @@ namespace DynamicCrops
                 save: () => this.Helper.WriteConfig(this.Config)
             );
 
-            // add some config options
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Allow flowers to regrow",
+                tooltip: () => "If checked, flowers can possibly be given the ability to regrow",
+                getValue: () => this.Config.flowersCanRegrow,
+                setValue: value => this.Config.flowersCanRegrow = value
+            );
             //configMenu.AddBoolOption(
             //    mod: this.ModManifest,
-            //    name: () => "Example checkbox",
-            //    tooltip: () => "An optional description shown as a tooltip to the player.",
-            //    getValue: () => this.Config.ExampleCheckbox,
-            //    setValue: value => this.Config.ExampleCheckbox = value
+            //    name: () => "If checked, any crop can be randomly given the ability to yield extra crops",
+            //    tooltip: () => "If left unchecked, game will default to base game crops",
+            //    getValue: () => this.Config.flowersCanRegrow,
+            //    setValue: value => this.Config.flowersCanRegrow = value
             //);
             //configMenu.AddTextOption(
             //    mod: this.ModManifest,
