@@ -5,7 +5,7 @@ namespace DynamicCrops
 {
     public class ModConfig
     {
-        public bool flowersCanRegrow = false;
+        public bool flowersCanRegrow = true;
     }
 }
 

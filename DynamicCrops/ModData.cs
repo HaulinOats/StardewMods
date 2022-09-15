@@ -1,14 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Threading;
-using System.Xml;
-using Microsoft.Xna.Framework;
 using MoreLinq;
-using StardewValley.Characters;
-using static StardewValley.Menus.CharacterCustomization;
 
 namespace DynamicCrops
 {
@@ -187,11 +180,10 @@ namespace DynamicCrops
         //     ModData.initUtility();
         // }
 
-        public static ModData initUtility()
+        public static ModData initUtility(ModConfig config)
         {
             var cropAndObjectData = new ModData();
             var flowerSeedIndexes = new string[] { "425", "427", "429", "453", "455", "431" };
-            var scythableCrops = new string[] { "299" };
             var seasonCrops = new Dictionary<string, List<string>>
             {
                 { "spring", new List<string>() },
@@ -343,7 +335,7 @@ namespace DynamicCrops
                     //if crop is regrowth capable or on a trellis
                     var isTrellisCrop = Convert.ToBoolean(Helpers.Capitalize(item["cropData"][7]));
                     var isFlower = flowerSeedIndexes.All(seedIdx.Contains);
-                    var flowersCanRegrow = true;
+                    var flowersCanRegrow = config.flowersCanRegrow;
                     Console.WriteLine($"is flower: {flowersCanRegrow}");
 
                     if (totalRegrowthCrops > 0 || isTrellisCrop) applyRegrowValues();
@@ -367,17 +359,17 @@ namespace DynamicCrops
                         if (cropSellPrice <= 50)
                         {
                             maxAllowedHarvest = 3;
-                            extraYieldChancePercentageMax = 20;
+                            extraYieldChancePercentageMax = 24;
                         }
                         else if (cropSellPrice > 50 && cropSellPrice <= 125)
                         {
                             maxAllowedHarvest = 2;
-                            extraYieldChancePercentageMax = 15;
+                            extraYieldChancePercentageMax = 16;
                         }
                         else if (cropSellPrice > 125 && cropSellPrice <= 150)
                         {
                             maxAllowedHarvest = 2;
-                            extraYieldChancePercentageMax = 10;
+                            extraYieldChancePercentageMax = 8;
                         }
                         var minYieldHarvest = Helpers.GetRandomIntegerInRange(1, maxAllowedHarvest);
                         var maxYieldHarvest = Helpers.GetRandomIntegerInRange(minYieldHarvest, maxAllowedHarvest);
@@ -385,7 +377,7 @@ namespace DynamicCrops
                         item["cropData"][6] = $"true {minYieldHarvest} {maxYieldHarvest} 0 {chanceForExtraCrops}";
 
                         //reduce crop sell price due to extra yield chance
-                        item["cropObjData"][1] = Math.Ceiling(int.Parse(item["cropObjData"][1]) * (1 - (chanceForExtraCrops * 4))).ToString();
+                        item["cropObjData"][1] = Math.Ceiling(int.Parse(item["cropObjData"][1]) * (1 - (chanceForExtraCrops * (minYieldHarvest - 1)))).ToString();
 
                         Console.WriteLine($"** EXTRA YIELD **");
                         Console.WriteLine($"{item["cropData"][6]}");
@@ -393,7 +385,7 @@ namespace DynamicCrops
                         totalExtraYieldCrops--;
                     }
 
-                    //the following scripts calculate gold per day/month per plot
+                    //calculates and prints out gold per day/month per plot
                     {
                         double maxHarvests = 1;
                         double extraSeedPurchaseMultiplier = 1;
@@ -422,8 +414,7 @@ namespace DynamicCrops
                         Console.WriteLine($"days to maturity: {daysToMaturity}");
                         Console.WriteLine($"max harvests: {maxHarvests}");
                         Console.WriteLine($"days to regrow: {daysToRegrow}");
-                        var goldPerDay = (maxHarvests * sellPricePerHarvest - maxHarvests * seedPurchasePrice) / growingDays;
-
+                        var goldPerDay = (maxHarvests * sellPricePerHarvest - seedPurchasePrice * extraSeedPurchaseMultiplier) / growingDays;
                         Console.WriteLine($"Gold per day (per plot): {Math.Round(goldPerDay, 2)}g");
                         Console.WriteLine($"Gold per season (per plot): {Math.Round(goldPerDay * 27, 2)}g");
                     }
@@ -445,7 +436,7 @@ namespace DynamicCrops
                         }
 
                         //if more crops are allowed to be given regrowth capabilities, set regrowth time to be between 30% - 42% of total grow time.
-                        var regrowthPercentage = Helpers.GetRandomIntegerInRange(30, 42);
+                        var regrowthPercentage = Helpers.GetRandomIntegerInRange(30, 60);
                         item["cropData"][4] = Math.Ceiling(totalGrowthTime * (regrowthPercentage * 0.01)).ToString();
                         Console.WriteLine($"regrowth: {item["cropData"][4]} days");
 

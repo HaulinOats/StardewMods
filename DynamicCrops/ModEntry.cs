@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using GenericModConfigMenu;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
@@ -38,7 +39,7 @@ namespace DynamicCrops
         {
             Monitor.Log($"{Game1.player.Name}'s game has loaded...", LogLevel.Debug);
             Monitor.Log($"intiating dynamic crop pricing scripts...", LogLevel.Debug);
-            cropsAndObjectData = ModData.initUtility();
+            cropsAndObjectData = ModData.initUtility(Config);
             Monitor.Log($"dynamic crops data created!");
             Helper.Data.WriteSaveData("crops-object-data", cropsAndObjectData);
             Monitor.Log("crop and object data saved to save file", LogLevel.Debug);
@@ -50,6 +51,7 @@ namespace DynamicCrops
             Monitor.Log("save file loaded. Invalidating cache...", LogLevel.Debug);
             Helper.GameContent.InvalidateCache("Data/Crops");
             Helper.GameContent.InvalidateCache("Data/ObjectInformation");
+            Helper.GameContent.InvalidateCache("TileSheets/crops");
         }
 
         private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
@@ -64,7 +66,6 @@ namespace DynamicCrops
                         var data = asset.AsDictionary<int, string>().Data;
                         foreach (var item in cropsAndObjectData.CropData)
                         {
-                            Monitor.Log($"key: {item.Key}, value: {item.Value}", LogLevel.Debug);
                             data[int.Parse(item.Key)] = item.Value;
                         }
                     });
@@ -78,7 +79,6 @@ namespace DynamicCrops
                         var data = asset.AsDictionary<int, string>().Data;
                         foreach (var item in cropsAndObjectData.ObjectData)
                         {
-                            Monitor.Log($"key: {item.Key}, value: {item.Value}", LogLevel.Debug);
                             data[int.Parse(item.Key)] = item.Value;
                         }
                     });
@@ -86,9 +86,11 @@ namespace DynamicCrops
                 }
                 if (e.Name.IsEquivalentTo("TileSheets/crops"))
                 {
-                    Monitor.Log("loading crop tilesheet...", LogLevel.Debug);
-                    e.LoadFromModFile<Texture2D>("assets/crops.png", AssetLoadPriority.Medium);
-                    Monitor.Log("crop tilesheet loaded", LogLevel.Debug);
+                    e.Edit(edit => {
+                        Texture2D sourceTexture = Helper.ModContent.Load<Texture2D>("assets/crops.png");
+                        var targetTexture = edit.AsImage();
+                        targetTexture.PatchImage(sourceTexture, null, new Rectangle(0,0, sourceTexture.Width, sourceTexture.Height));
+                    });
                 }
             }
         }
