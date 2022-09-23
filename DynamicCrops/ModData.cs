@@ -45,10 +45,6 @@ namespace DynamicCrops
             { "492", "1 3 3 3/fall/20/280/-1/0/false/false/false"},
             { "493", "1 2 1 1 2/fall/21/282/5/0/true 2 2 0 .1/false/false"},
             { "494", "1 1 2 2/fall/22/284/-1/0/false/false/false"},
-            { "495", "3 4/spring/23/16/-1/0/false/false/false"},
-            { "496", "3 4/summer/23/396/-1/0/false/false/false"},
-            { "497", "3 4/fall/23/404/-1/0/false/false/false"},
-            { "498", "3 4/winter/23/412/-1/0/false/false/false"},
             { "499", "2 7 7 7 5/spring summer fall/24/454/7/0/false/false/false"},
             { "745", "1 1 2 2 2/spring/36/400/4/0/true 1 1 0 .02/false/false"},
             { "802", "2 2 2 3 3/spring summer fall winter/41/90/3/0/false/false/false"},
@@ -149,10 +145,6 @@ namespace DynamicCrops
             { "492", "Yam Seeds/30/-300/Seeds -74/Yam Seeds/Plant these in the fall. Takes 10 days to mature."},
             { "493", "Cranberry Seeds/120/-300/Seeds -74/Cranberry Seeds/Plant these in the fall. Takes 7 days to mature, and continues to produce after first harvest."},
             { "494", "Beet Seeds/10/-300/Seeds -74/Beet Seeds/Plant these in the fall. Takes 6 days to mature."},
-            { "495", "Spring Seeds/35/-300/Seeds -74/Spring Seeds/An assortment of wild spring seeds."},
-            { "496", "Summer Seeds/55/-300/Seeds -74/Summer Seeds/An assortment of wild summer seeds."},
-            { "497", "Fall Seeds/45/-300/Seeds -74/Fall Seeds/An assortment of wild fall seeds."},
-            { "498", "Winter Seeds/30/-300/Seeds -74/Winter Seeds/An assortment of wild winter seeds."},
             { "499", "Ancient Seeds/30/-300/Seeds -74/Ancient Seeds/Could these still grow?"},
             { "591", "Tulip/30/18/Basic -80/Tulip/The most popular spring flower. Has a very faint sweet smell."},
             { "593", "Summer Spangle/90/18/Basic -80/Summer Spangle/A tropical bloom that thrives in the humid summer air. Has a sweet, tangy aroma."},
@@ -193,12 +185,12 @@ namespace DynamicCrops
             };
 
             //default values for crop growth ranges
-            var growthRangeShortMin = 4;
+            var growthRangeShortMin = 5;
             var growthRangeShortMax = 8;
             var growthRangeMediumMin = 9;
             var growthRangeMediumMax = 15;
             var growthRangeLongMin = 16;
-            var growthRangeLongMax = 26;
+            var growthRangeLongMax = 25;
 
             //crop seed and price range gold per day multipliers
             var regularSeedGPDMultiplierMin = 2;
@@ -207,8 +199,8 @@ namespace DynamicCrops
             var regularCropGPDMultiplierMax = 15;
             var regrowSeedGPDMultiplierMin = 4;
             var regrowSeedGPDMultiplierMax = 7;
-            var regrowCropGPDMultiplierMin = 9;
-            var regrowCropGPDMultiplierMax = 13;
+            var regrowCropGPDMultiplierMin = 8;
+            var regrowCropGPDMultiplierMax = 11;
 
             Console.WriteLine($"Growth range (Short): {growthRangeShortMin} - {growthRangeShortMax}");
             Console.WriteLine($"Growth range (Medium): {growthRangeMediumMin} - {growthRangeMediumMax}");
@@ -232,7 +224,7 @@ namespace DynamicCrops
                 var seasonCropPool = new List<string>(seasonCrops[season.Key].Shuffle());
                 var totalSeasonCrops = seasonCropPool.Count;
 
-                //set number of crops per season that are allowed to regrow or have extra harvest yields
+                //set number of crops per season that are allowed to regrow
                 var totalRegrowthCropsPercentage = 0.40;
                 var totalRegrowthCrops = Math.Ceiling(totalSeasonCrops * totalRegrowthCropsPercentage);
                 Console.WriteLine($"total regrowth crops: {totalRegrowthCrops}");

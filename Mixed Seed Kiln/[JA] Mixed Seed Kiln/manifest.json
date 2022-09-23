@@ -1,0 +1,11 @@
+{
+  "Name": "[JA] Mixed Seed Kiln",
+  "Author": "HaulinOats",
+  "Version": "1.0.0",
+  "Description": "Convert stone, fiber, or wood into mixed seed.",
+  "UniqueID": "HaulinOats.MixedSeedKilnJA",
+  "UpdateKeys": [],
+  "ContentPackFor": {
+    "UniqueID": "spacechase0.JsonAssets"
+  }
+}

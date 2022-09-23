@@ -47,11 +47,13 @@ namespace DynamicCrops
 
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            cropsAndObjectData = Helper.Data.ReadSaveData<ModData>("crops-object-data");
-            Monitor.Log("save file loaded. Invalidating cache...", LogLevel.Debug);
-            Helper.GameContent.InvalidateCache("Data/Crops");
-            Helper.GameContent.InvalidateCache("Data/ObjectInformation");
-            Helper.GameContent.InvalidateCache("TileSheets/crops");
+            cropsAndObjectData = Helper.Data.ReadSaveData<ModData>("crops-object-data") ?? null;
+            if(cropsAndObjectData != null){
+                Monitor.Log("save file loaded. Invalidating cache...", LogLevel.Debug);
+                Helper.GameContent.InvalidateCache("Data/Crops");
+                Helper.GameContent.InvalidateCache("Data/ObjectInformation");
+                Helper.GameContent.InvalidateCache("TileSheets/crops");
+            }
         }
 
         private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
@@ -87,7 +89,7 @@ namespace DynamicCrops
                 if (e.Name.IsEquivalentTo("TileSheets/crops"))
                 {
                     e.Edit(edit => {
-                        Texture2D sourceTexture = Helper.ModContent.Load<Texture2D>("assets/crops.png");
+                        Texture2D sourceTexture = Helper.ModContent.Load<Texture2D>("assets/Crops.png");
                         var targetTexture = edit.AsImage();
                         targetTexture.PatchImage(sourceTexture, null, new Rectangle(0,0, sourceTexture.Width, sourceTexture.Height));
                     });

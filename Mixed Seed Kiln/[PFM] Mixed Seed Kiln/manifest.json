@@ -1,0 +1,17 @@
+{
+  "Name": "[PFM] Mixed Seed Kiln",
+  "Author": "HaulinOats",
+  "Description": "Adds machine recipes for the Mixed Seed Kiln",
+  "Version": "1.0.1",
+  "UniqueID": "HaulinOats.MixedSeedKilnPFM",
+  "UpdateKeys": [],
+  "ContentPackFor": {
+    "UniqueID": "DIGUS.ProducerFrameworkMod"
+  },
+  "Dependencies": [
+    {
+      "UniqueID": "HaulinOats.MixedSeedKilnJA",
+      "IsRequired": true
+    }
+  ]
+}

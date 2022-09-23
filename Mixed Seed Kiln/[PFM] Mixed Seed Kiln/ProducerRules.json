@@ -1,0 +1,26 @@
+[
+  {
+    "ProducerName": "Mixed Seed Kiln",
+    "InputIdentifier": "390",
+    "InputStack": 10,
+    "MinutesUntilReady": 20,
+    "OutputIdentifier": "770",
+    "Sounds": ["Ship"]
+  },
+  {
+    "ProducerName": "Mixed Seed Kiln",
+    "InputIdentifier": "771",
+    "InputStack": 10,
+    "MinutesUntilReady": 20,
+    "OutputIdentifier": "770",
+    "Sounds": ["Ship"]
+  },
+  {
+    "ProducerName": "Mixed Seed Kiln",
+    "InputIdentifier": "388",
+    "InputStack": 10,
+    "MinutesUntilReady": 20,
+    "OutputIdentifier": "770",
+    "Sounds": ["Ship"]
+  }
+]
