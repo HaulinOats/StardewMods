@@ -59,7 +59,16 @@
     "InputStack": 1,
     "OutputStack": 5,
     "MinutesUntilReady": 20,
-    "OutputIdentifier": "Parsnip Seed",
+    "OutputIdentifier": "Parsnip Seeds",
+    "Sounds": ["furnace"]
+  },
+  {
+    "ProducerName": "Mining-2-Seed Processor",
+    "InputIdentifier": "Fire Quartz",
+    "InputStack": 1,
+    "OutputStack": 5,
+    "MinutesUntilReady": 20,
+    "OutputIdentifier": "Red Cabbage Seeds",
     "Sounds": ["furnace"]
   },
   {
@@ -78,15 +87,6 @@
     "OutputStack": 5,
     "MinutesUntilReady": 20,
     "OutputIdentifier": "Pumpkin Seeds",
-    "Sounds": ["furnace"]
-  },
-  {
-    "ProducerName": "Mining-2-Seed Processor",
-    "InputIdentifier": "Fire Quartz",
-    "InputStack": 1,
-    "OutputStack": 5,
-    "MinutesUntilReady": 20,
-    "OutputIdentifier": "Red Cabbage Seeds",
     "Sounds": ["furnace"]
   },
   {
