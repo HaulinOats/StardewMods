@@ -1,0 +1,19 @@
+{
+  "Name": "Fish-2-Seed Processor",
+  "Author": "HaulinOats",
+  "Description": "Convert fish and crustaceans into seeds",
+  "Version": "1.1.0",
+  "UniqueID": "HaulinOats.Fish2SeedProcessor",
+  "UpdateKeys": ["Nexus:13932"],
+  "Dependencies": [
+    {
+      "UniqueID": "DIGUS.ProducerFrameworkMod"
+    },
+    {
+      "UniqueID": "spacechase0.JsonAssets"
+    },
+    {
+      "UniqueID": "Pathoschild.ContentPatcher"
+    }
+  ]
+}

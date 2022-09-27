@@ -1,0 +1,11 @@
+{
+  "Name": "[JA] Fish-2-Seed Processor",
+  "Author": "HaulinOats",
+  "Version": "1.0.0",
+  "Description": "Convert fish and crustaceans into seeds.",
+  "UniqueID": "HaulinOats.Fish2SeedProcessorJA",
+  "UpdateKeys": ["Nexus:1720"],
+  "ContentPackFor": {
+    "UniqueID": "spacechase0.JsonAssets"
+  }
+}

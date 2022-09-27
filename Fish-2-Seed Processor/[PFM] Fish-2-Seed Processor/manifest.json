@@ -1,0 +1,11 @@
+{
+  "Name": "[PFM] Fish-2-Seed Processor",
+  "Author": "HaulinOats",
+  "Description": "Convert fish and crustaceans into seeds",
+  "Version": "1.0.0",
+  "UniqueID": "HaulinOats.Fish2SeedProcessorPFM",
+  "UpdateKeys": ["Nexus:4970"],
+  "ContentPackFor": {
+    "UniqueID": "DIGUS.ProducerFrameworkMod"
+  }
+}
