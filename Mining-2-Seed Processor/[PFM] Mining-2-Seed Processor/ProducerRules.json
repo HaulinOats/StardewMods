@@ -584,167 +584,167 @@
     "AdditionalOutputs": [
       {
         "OutputIdentifier": "Bean Starter",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Parsnip Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Cauliflower Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Jazz Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Garlic Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Kale Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Potato Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Coffee Bean",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Tulip Bulb",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Rice Shoot",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Blueberry Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Corn Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Hops Starter",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Pepper Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Melon Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Poppy Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Radish Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
-        "OutputIdentifier": "Rhubard Seeds",
-        "MinutesUntilReady": 30
+        "OutputIdentifier": "Rhubarb Seeds",
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Red Cabbage Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Starfruit Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Spangle Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Sunflower Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Tomato Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Wheat Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Amaranth Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Artichoke Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Beet Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Bok Choy Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Cranberry Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Eggplant Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Fairy Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Grape Starter",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Pumpkin Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Yam Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Cactus Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Fiber Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Mixed Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Pineapple Seeds",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Taro Tuber",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Rare Seed",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       },
       {
         "OutputIdentifier": "Tea Sapling",
-        "MinutesUntilReady": 30
+        "MinutesUntilReady": 120
       }
     ]
   },
@@ -837,7 +837,7 @@
         "MinutesUntilReady": 30
       },
       {
-        "OutputIdentifier": "Rhubard Seeds",
+        "OutputIdentifier": "Rhubarb Seeds",
         "MinutesUntilReady": 30
       },
       {
@@ -957,6 +957,179 @@
       {
         "OutputIdentifier": "Starfruit Seeds",
         "MinutesUntilReady": 30
+      }
+    ]
+  },
+  {
+    "ProducerName": "Mining-2-Seed Processor",
+    "InputIdentifier": "Radioactive Ore",
+    "InputStack": 1,
+    "OutputStack": 15,
+    "Sounds": ["furnace"],
+    "AdditionalOutputs": [
+      {
+        "OutputIdentifier": "Bean Starter",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Parsnip Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Cauliflower Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Jazz Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Garlic Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Kale Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Potato Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Coffee Bean",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Tulip Bulb",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Rice Shoot",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Blueberry Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Corn Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Hops Starter",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Pepper Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Melon Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Poppy Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Radish Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Rhubarb Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Red Cabbage Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Starfruit Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Spangle Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Sunflower Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Tomato Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Wheat Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Amaranth Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Artichoke Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Beet Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Bok Choy Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Cranberry Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Eggplant Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Fairy Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Grape Starter",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Pumpkin Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Yam Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Cactus Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Fiber Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Mixed Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Pineapple Seeds",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Taro Tuber",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Rare Seed",
+        "MinutesUntilReady": 20
+      },
+      {
+        "OutputIdentifier": "Tea Sapling",
+        "MinutesUntilReady": 20
       }
     ]
   }
