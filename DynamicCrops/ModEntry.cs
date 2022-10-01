@@ -283,7 +283,7 @@ namespace DynamicCrops
                     }
                     else
                     {
-                        //balance out values to prevent high-priced crops from 
+                        //balance out values to allow low-price crops to get extra yields, and higher-priced ones to not get them at all
                         var cropSellPrice = int.Parse(item["cropObjData"][1]);
                         var maxAllowedHarvest = 1;
                         var extraYieldChancePercentageMax = 5;
@@ -314,6 +314,32 @@ namespace DynamicCrops
                         Monitor.Log($"{item["cropData"][6]}", LogLevel.Debug);
                         Monitor.Log($"updated crop sell price: {item["cropObjData"][1]}", LogLevel.Debug);
                         totalExtraYieldCrops--;
+                    }
+
+                    //Update artisan good prices to match new crop/seed prices if price of artisan good not dependent on crop price values (coffee, pale ale, etc)
+                    //Hops Seeds
+                    if (seedIdx == "302")
+                    {
+                        //303 -> Pale Ale
+                        setArtisanGoodPrice("303");
+                    }
+                    //Wheat Seeds
+                    if (seedIdx == "483")
+                    {
+                        //346 -> Beer
+                        setArtisanGoodPrice("346");
+                    }
+                    //Coffee Bean
+                    if (seedIdx == "433")
+                    {
+                        //395 -> Coffee
+                        setArtisanGoodPrice("395");
+                    }
+                    //Tea Sapling
+                    if (seedIdx == "251")
+                    {
+                        //614 -> Green Tea
+                        setArtisanGoodPrice("614");
                     }
 
                     //calculates and prints out gold per day/month per plot (for debugging and logging)
@@ -406,6 +432,13 @@ namespace DynamicCrops
 
                         //append period to season text
                         seedDescription += '.';
+                    }
+
+                    void setArtisanGoodPrice(string objId)
+                    {
+                        var artisanObjArr = cropAndObjectData.ObjectData[objId].Split('/');
+                        artisanObjArr[1] = (int.Parse(item["cropObjData"][1]) * (int)(Helpers.GetRandomIntegerInRange(115, 140) * 0.01)).ToString();
+                        cropAndObjectData.ObjectData[objId] = string.Join('/', artisanObjArr);
                     }
                 }
             }
