@@ -277,43 +277,52 @@ namespace DynamicCrops
                     Monitor.Log($"seed description: {seedDescription}", LogLevel.Debug);
 
                     // if crop is allowed to have extra chance for multiple harvesting
-                    if (totalExtraYieldCrops <= 0)
+                    if (totalExtraYieldCrops <= 0 || seedIdx != "433")
                     {
                         item["cropData"][6] = "false";
                     }
                     else
                     {
-                        //balance out values to allow low-price crops to get extra yields, and higher-priced ones to not get them at all
-                        var cropSellPrice = int.Parse(item["cropObjData"][1]);
-                        var maxAllowedHarvest = 1;
-                        var extraYieldChancePercentageMax = 5;
-                        if (cropSellPrice <= 50)
+                        //if coffee bean, leave default yield values but update seed price to match minimum yield chance (4)
+                        if(seedIdx == "433")
                         {
-                            maxAllowedHarvest = 3;
-                            extraYieldChancePercentageMax = 24;
-                        }
-                        else if (cropSellPrice > 50 && cropSellPrice <= 125)
+                            item["cropObjData"][1] = (int.Parse(item["cropObjData"][1]) / 4).ToString();
+                        } else
                         {
-                            maxAllowedHarvest = 2;
-                            extraYieldChancePercentageMax = 16;
-                        }
-                        else if (cropSellPrice > 125 && cropSellPrice <= 150)
-                        {
-                            maxAllowedHarvest = 2;
-                            extraYieldChancePercentageMax = 8;
-                        }
-                        var minYieldHarvest = Helpers.GetRandomIntegerInRange(1, maxAllowedHarvest);
-                        var maxYieldHarvest = Helpers.GetRandomIntegerInRange(minYieldHarvest, maxAllowedHarvest);
-                        var chanceForExtraCrops = Helpers.GetRandomIntegerInRange(2, extraYieldChancePercentageMax) * 0.01;
-                        item["cropData"][6] = $"true {minYieldHarvest} {maxYieldHarvest} 0 {chanceForExtraCrops}";
+                            //balance out values to allow low-price crops to get extra yields, and higher-priced ones to not get them at all
+                            var cropSellPrice = int.Parse(item["cropObjData"][1]);
+                            var maxAllowedHarvest = 1;
+                            var extraYieldChancePercentageMax = 5;
+                            if (cropSellPrice <= 50)
+                            {
+                                maxAllowedHarvest = 3;
+                                extraYieldChancePercentageMax = 24;
+                            }
+                            else if (cropSellPrice > 50 && cropSellPrice <= 125)
+                            {
+                                maxAllowedHarvest = 2;
+                                extraYieldChancePercentageMax = 16;
+                            }
+                            else if (cropSellPrice > 125 && cropSellPrice <= 150)
+                            {
+                                maxAllowedHarvest = 2;
+                                extraYieldChancePercentageMax = 8;
+                            }
+                            var minYieldHarvest = Helpers.GetRandomIntegerInRange(1, maxAllowedHarvest);
+                            var maxYieldHarvest = Helpers.GetRandomIntegerInRange(minYieldHarvest, maxAllowedHarvest);
+                            var chanceForExtraCrops = Helpers.GetRandomIntegerInRange(2, extraYieldChancePercentageMax) * 0.01;
+                            item["cropData"][6] = $"true {minYieldHarvest} {maxYieldHarvest} 0 {chanceForExtraCrops}";
 
-                        //reduce crop sell price due to extra yield chance
-                        item["cropObjData"][1] = Math.Ceiling(int.Parse(item["cropObjData"][1]) * (1 - (chanceForExtraCrops * (minYieldHarvest - 1)))).ToString();
+                            //reduce crop sell price due to extra yield chance
+                            item["cropObjData"][1] = Math.Ceiling(int.Parse(item["cropObjData"][1]) * (1 - (chanceForExtraCrops * (minYieldHarvest - 1)))).ToString();
 
-                        Monitor.Log($"** EXTRA YIELD **", LogLevel.Debug);
-                        Monitor.Log($"{item["cropData"][6]}", LogLevel.Debug);
-                        Monitor.Log($"updated crop sell price: {item["cropObjData"][1]}", LogLevel.Debug);
-                        totalExtraYieldCrops--;
+                            Monitor.Log($"** EXTRA YIELD **", LogLevel.Debug);
+                            Monitor.Log($"{item["cropData"][6]}", LogLevel.Debug);
+                            Monitor.Log($"updated crop sell price: {item["cropObjData"][1]}", LogLevel.Debug);
+                            totalExtraYieldCrops--;
+                        }
+
+                
                     }
 
                     //Update artisan good prices to match new crop/seed prices if price of artisan good not dependent on crop price values (coffee, pale ale, etc)

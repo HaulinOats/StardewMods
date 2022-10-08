@@ -1,7 +1,7 @@
 ﻿{
   "Name": "Fine, I'll Go Make My Own Seeds",
   "Author": "HaulinOats",
-  "Version": "1.0.0",
+  "Version": "1.0.1",
   "Description": "A collection of mods that force the player to get seeds via alternative means like processor machines.",
   "UniqueID": "HaulinOats.FineIWillGoMakeMyOwnSeeds",
   "EntryDll": "FineIWillGoMakeMyOwnSeeds.dll",
@@ -10,24 +10,6 @@
   "Dependencies": [
     {
       "UniqueID": "spacechase0.GenericModConfigMenu"
-    },
-    {
-      "UniqueID": "HaulinOats.Fish2SeedProcessorJA"
-    },
-    {
-      "UniqueID": "HaulinOats.Fish2SeedProcessorPFM"
-    },
-    {
-      "UniqueID": "HaulinOats.Mining2SeedProcessorJA"
-    },
-    {
-      "UniqueID": "HaulinOats.Mining2SeedProcessorPFM"
-    },
-    {
-      "UniqueID": "HaulinOats.MixedSeedKilnJA"
-    },
-    {
-      "UniqueID": "HaulinOats.MixedSeedKilnPFM"
     }
   ]
 }
