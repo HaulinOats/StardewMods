@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using GenericModConfigMenu;
-using Microsoft.Xna.Framework.Input;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley.Menus;
@@ -14,6 +13,7 @@ namespace DynamicCrops
     {
         private ModConfig Config;
         string[] saplingNames = { "Cherry Sapling", "Apricot Sapling", "Orange Sapling", "Peach Sapling", "Pomegranate Sapling", "Apple Sapling", "Mango Sapling", "Banana Sapling" };
+        string[] vanillaCropNames = { "Rice Shoot", "Amaranth Seeds", "Grape Starter", "Hops Starter", "Rare Seed", "Fairy Seeds", "Tulip Bulb", "Jazz Seeds", "Sunflower Seeds", "Coffee Bean", "Poppy Seeds", "Spangle Seeds", "Parsnip Seeds", "Bean Starter", "Cauliflower Seeds", "Potato Seeds", "Garlic Seeds", "Kale Seeds", "Rhubarb Seeds", "Melon Seeds", "Tomato Seeds", "Blueberry Seeds", "Pepper Seeds", "Wheat Seeds", "Radish Seeds", "Red Cabbage Seeds", "Starfruit Seeds", "Corn Seeds", "Eggplant Seeds", "Artichoke Seeds", "Pumpkin Seeds", "Bok Choy Seeds", "Yam Seeds", "Cranberry Seeds", "Beet Seeds", "Ancient Seeds", "Strawberry Seeds", "Cactus Seeds", "Taro Tuber", "Pineapple Seeds" };
 
         /*********
         ** Public methods
@@ -35,16 +35,17 @@ namespace DynamicCrops
 
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
-            if (!this.Config.inflateSeedPrices) return;
-            if (e.NewMenu is not ShopMenu shopMenu) return;
+            if (!this.Config.inflateSeedPrices || e.NewMenu is not ShopMenu shopMenu) return;
 
+            Monitor.Log("entering shop menu...", LogLevel.Debug);
             //Raise seed prices except for fruit tree saplings
             foreach (var (item, value) in shopMenu.itemPriceAndStock)
             {
-                if (item is SObject { Category: SObject.SeedsCategory } && !saplingNames.Contains(item.Name))
+                if (item is SObject { Category: SObject.SeedsCategory } && vanillaCropNames.Contains(item.Name) && !saplingNames.Contains(item.Name))
                 {
                     //pseudo-randomize large seed values
                     shopMenu.itemPriceAndStock[item][0] = new Random().Next(20, 50) * 500;
+                    Monitor.Log(item.Name, LogLevel.Debug);
                 }
                     
             }

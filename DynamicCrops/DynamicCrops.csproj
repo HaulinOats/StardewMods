@@ -14,7 +14,7 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.0.1" />
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.0.2" />
     <PackageReference Include="System.Text.Json" Version="6.0.6" />
     <PackageReference Include="morelinq" Version="3.3.2" />
   </ItemGroup>

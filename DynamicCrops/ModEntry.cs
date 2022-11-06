@@ -25,6 +25,8 @@ namespace DynamicCrops
             //get values from config
             this.Config = this.Helper.ReadConfig<ModConfig>();
             Monitor.Log($"flowers can regrow: {this.Config.flowersCanRegrow}", LogLevel.Debug);
+            Monitor.Log($"mod is active: {this.Config.activateDynamicCrops}", LogLevel.Debug);
+            Monitor.Log($"only affect base game crops: {this.Config.onlyAffectBaseCrops}", LogLevel.Debug);
 
             helper.Events.Content.AssetRequested += OnAssetRequested;
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
@@ -33,23 +35,25 @@ namespace DynamicCrops
 
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            cropsAndObjectData = this.Helper.Data.ReadJsonFile<ModData>($"data/{Constants.SaveFolderName}.json") ?? null;
-            //if crop and object data exists in save-specific json file, load it
-            if(cropsAndObjectData is null)
+            if (Config.activateDynamicCrops)
             {
-                Monitor.Log($"cropsAndObjectData is null. Running utility...", LogLevel.Debug);
-                cropsAndObjectData = initUtility(Config, Monitor);
-                this.Helper.Data.WriteJsonFile($"data/{Constants.SaveFolderName}.json", cropsAndObjectData);
-                Monitor.Log($"... utility data saved!", LogLevel.Debug);
+                cropsAndObjectData = this.Helper.Data.ReadJsonFile<ModData>($"data/{Constants.SaveFolderName}.json") ?? null;
+                if (cropsAndObjectData == null)
+                {
+                    Monitor.Log($"cropsAndObjectData null, running utility and creating save-specific json file...", LogLevel.Debug);
+                    cropsAndObjectData = initUtility(Config, Monitor, Helper);
+                    this.Helper.Data.WriteJsonFile($"data/{Constants.SaveFolderName}.json", cropsAndObjectData);
+                    Monitor.Log($"... utility data saved!", LogLevel.Debug);
+                }
+                Helper.GameContent.InvalidateCache("Data/Crops");
+                Helper.GameContent.InvalidateCache("Data/ObjectInformation");
+                Helper.GameContent.InvalidateCache("TileSheets/crops");
             }
-            Helper.GameContent.InvalidateCache("Data/Crops");
-            Helper.GameContent.InvalidateCache("Data/ObjectInformation");
-            Helper.GameContent.InvalidateCache("TileSheets/crops");
         }
 
         private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
-            if (Context.IsWorldReady && cropsAndObjectData != null)
+            if (Context.IsWorldReady && Config.activateDynamicCrops && cropsAndObjectData != null)
             {
                 if (e.Name.IsEquivalentTo("Data/Crops"))
                 {
@@ -59,9 +63,10 @@ namespace DynamicCrops
                         var data = asset.AsDictionary<int, string>().Data;
                         foreach (var (item, value) in cropsAndObjectData.CropData)
                         {
-                            data[int.Parse(item)] = value;
+                            Monitor.Log($"{item}:{value}", LogLevel.Debug);
+                            data[item] = value;
                         }
-                    });
+                    }, AssetEditPriority.Late);
                     Monitor.Log("crop data loaded", LogLevel.Debug);
                 }
                 if (e.Name.IsEquivalentTo("Data/ObjectInformation"))
@@ -72,9 +77,10 @@ namespace DynamicCrops
                         var data = asset.AsDictionary<int, string>().Data;
                         foreach (var (item, value) in cropsAndObjectData.ObjectData)
                         {
-                            data[int.Parse(item)] = value;
+                            Monitor.Log($"{item}:{value}", LogLevel.Debug);
+                            data[item] = value;
                         }
-                    });
+                    }, AssetEditPriority.Late);
                     Monitor.Log("object data loaded", LogLevel.Debug);
                 }
                 if (e.Name.IsEquivalentTo("TileSheets/crops"))
@@ -104,31 +110,49 @@ namespace DynamicCrops
 
             configMenu.AddBoolOption(
                 mod: this.ModManifest,
+                name: () => "Activate Dynamic Crops mod",
+                tooltip: () => "If unchecked, prevents mod from dynamically generating crops (i.e. turns off mod)",
+                getValue: () => this.Config.activateDynamicCrops,
+                setValue: value => this.Config.activateDynamicCrops = value
+            );
+
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
                 name: () => "Allow flowers to regrow",
                 tooltip: () => "If checked, flowers can possibly be given the ability to regrow",
                 getValue: () => this.Config.flowersCanRegrow,
                 setValue: value => this.Config.flowersCanRegrow = value
             );
+
+            configMenu.AddBoolOption(
+                mod: this.ModManifest,
+                name: () => "Mod only affects base game crops",
+                tooltip: () => "If checked, prevents mod from affecting values of crops/seeds added from other mods",
+                getValue: () => this.Config.onlyAffectBaseCrops,
+                setValue: value => this.Config.onlyAffectBaseCrops = value
+            );
         }
 
-        public static ModData initUtility(ModConfig config, StardewModdingAPI.IMonitor Monitor)
+        public static ModData initUtility(ModConfig config, StardewModdingAPI.IMonitor Monitor, IModHelper helper)
         {
-            var cropAndObjectData = new ModData();
-            var flowerSeedIndexes = new string[] { "425", "427", "429", "453", "455", "431" };
-            var seasonCrops = new Dictionary<string, List<string>>
+            var cropData = new Dictionary<int, string>();
+            var objectData = new Dictionary<int, string>();
+            var flowerSeedIndexes = new int[] { 425, 427, 429, 453, 455, 431 };
+            var vanillaCropIndexes = new int[] { 273, 299, 301, 302, 347, 425, 427, 429, 431, 433, 453, 455, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 499, 745, 802, 831, 833 };
+            var seasonCrops = new Dictionary<string, List<int>>
             {
-                { "spring", new List<string>() },
-                { "summer", new List<string>() },
-                { "fall", new List<string>() },
-                { "winter", new List<string>() }
+                { "spring", new List<int>() },
+                { "summer", new List<int>() },
+                { "fall", new List<int>() },
+                { "winter", new List<int>() }
             };
 
             //default values for crop growth ranges
             var growthRangeShortMin = 5;
             var growthRangeShortMax = 8;
             var growthRangeMediumMin = 9;
-            var growthRangeMediumMax = 15;
-            var growthRangeLongMin = 16;
+            var growthRangeMediumMax = 14;
+            var growthRangeLongMin = 15;
             var growthRangeLongMax = 25;
 
             //crop seed and price range gold per day multipliers
@@ -140,13 +164,45 @@ namespace DynamicCrops
             var regrowSeedGPDMultiplierMax = 7;
             var regrowCropGPDMultiplierMin = 8;
             var regrowCropGPDMultiplierMax = 11;
+            var mediumSellPriceMultiplier = 1.1;
+            var longSellPriceMultiplier = 1.2;
 
             Monitor.Log($"Growth range (Short): {growthRangeShortMin} - {growthRangeShortMax}", LogLevel.Debug);
             Monitor.Log($"Growth range (Medium): {growthRangeMediumMin} - {growthRangeMediumMax}", LogLevel.Debug);
             Monitor.Log($"Growth range (Long): {growthRangeLongMin} - {growthRangeLongMax}", LogLevel.Debug);
 
+            //get crop and seed/crop related objects for modification
+            string[] categoryStrings = { "Basic", "Seeds", "Vegetable", "Fruit", "Flower" };
+            int[] modifiedArtisanGoodIds = { 303, 346, 395, 614 };
+
+            foreach (var (key, value) in helper.GameContent.Load<Dictionary<int, string>>("Data/Crops"))
+            {
+                //Monitor.Log($"{key}:{value}", LogLevel.Debug);
+                if(config.onlyAffectBaseCrops)
+                {
+                    if(key < 931)
+                    {
+                        cropData.TryAdd(key, value);
+                    }
+                } else
+                {
+                    cropData.TryAdd(key, value);
+                }
+            }
+            foreach (var (key, value) in helper.GameContent.Load<Dictionary<int, string>>("Data/ObjectInformation"))
+            {
+                var objectArr = value.Split('/');
+                var categoryArr = objectArr[3].Split(' ');
+                //Monitor.Log($"{key}:{value}", LogLevel.Debug);
+                //ignore 1720 - Dummy Object
+                if (((categoryStrings.Contains(categoryArr[0]) && categoryArr.Length > 1) || modifiedArtisanGoodIds.Contains(key)) && key != 1720)
+                {
+                    objectData.TryAdd(key, value);
+                }
+            }
+
             //separate each crop/seed into seasons
-            foreach (var crop in cropAndObjectData.CropData)
+            foreach (var crop in cropData)
             {
                 var seasons = crop.Value.Split('/')[1].Split(' ');
                 foreach (var season in seasons)
@@ -160,13 +216,13 @@ namespace DynamicCrops
             {
                 Monitor.Log($"{season.ToUpper()}", LogLevel.Debug);
 
-                var seasonCropPool = new List<string>(seasonCrops[season].Shuffle());
+                var seasonCropPool = new List<int>(seasonCrops[season].Shuffle());
                 var totalSeasonCrops = seasonCropPool.Count;
 
                 //set number of crops per season that are allowed to regrow
-                var totalRegrowthCropsPercentage = 0.40;
-                var totalRegrowthCrops = Math.Ceiling(totalSeasonCrops * totalRegrowthCropsPercentage);
-                Monitor.Log($"total regrowth crops: {totalRegrowthCrops}", LogLevel.Debug);
+                var totalRegrowthCropsPercentage = 0.4;
+                var totalRegrowthCrops = Math.Ceiling(vanillaCropIndexes.Length * totalRegrowthCropsPercentage);
+                Monitor.Log($"total regrowth crops: {vanillaCropIndexes.Length}", LogLevel.Debug);
 
                 //set how many crops per season will fall into short, medium, and long-term harvests
                 //medium crop percentage will end up being percentage difference leftover after removing long and short crop percentages from 100%
@@ -194,24 +250,24 @@ namespace DynamicCrops
                 for (int seasonCropIdx = 0; seasonCropIdx < seasonCropPool.Count; seasonCropIdx++)
                 {
                     var seedIdx = seasonCropPool[seasonCropIdx];
-                    var objIdx = cropAndObjectData.CropData[seedIdx].Split('/')[3];
+                    var objIdx = int.Parse(cropData[seedIdx].Split('/')[3]);
                     Monitor.Log($"seedIdx: {seedIdx}", LogLevel.Debug);
                     Monitor.Log($"objIdx: {objIdx}", LogLevel.Debug);
                     var item = new Dictionary<string, string[]>
                     {
-                        { "cropData", cropAndObjectData.CropData[seedIdx].Split('/') },
-                        { "seedObjData", cropAndObjectData.ObjectData[seedIdx].Split('/') },
-                        { "cropObjData", cropAndObjectData.ObjectData[objIdx].Split('/') },
+                        { "cropData", cropData[seedIdx].Split('/') },
+                        { "seedObjData", objectData[seedIdx].Split('/') },
+                        { "cropObjData", objectData[objIdx].Split('/') },
                     };
 
                     //generate random growth (harvest) times for different crops
                     //manually set Parsnip to be a short-term crop since it's the only crop
                     //you have access to start making money from at the start of new game
                     var totalGrowthTime = Helpers.GetRandomIntegerInRange(growthRangeMediumMin, growthRangeMediumMax);
-                    if (totalShortCrops > 0 || seedIdx == "472")
+                    if (totalShortCrops > 0 || seedIdx == 472)
                     {
                         //for all crops that are NOT Parsnip
-                        if (seedIdx != "472")
+                        if (seedIdx != 472)
                         {
                             totalGrowthTime = Helpers.GetRandomIntegerInRange(growthRangeShortMin, growthRangeShortMax);
                         }
@@ -268,127 +324,92 @@ namespace DynamicCrops
                     var isFlower = flowerSeedIndexes.Contains(seedIdx);
                     Monitor.Log($"is flower: {config.flowersCanRegrow}", LogLevel.Debug);
 
-                    //if more crops can be given regrowth capability and aren't long-term crops, apply regrowth values
-                    if ((totalRegrowthCrops > 0 && totalGrowthTime < 16) || isTrellisCrop) applyRegrowValues();
+                    //if more crops can be given regrowth capability and aren't long-term crops, or is a trellis crop , apply regrowth values
+                    if ((totalRegrowthCrops > 0 && totalGrowthTime < growthRangeLongMin) && vanillaCropIndexes.Contains(seedIdx) || isTrellisCrop) applyRegrowValues();
                     else applyRegularValues();
 
                     //store updated description
                     item["seedObjData"][5] = seedDescription;
                     Monitor.Log($"seed description: {seedDescription}", LogLevel.Debug);
 
-                    // if crop is allowed to have extra chance for multiple harvesting
-                    if (totalExtraYieldCrops <= 0 || seedIdx != "433")
+                    // if crop is not allowed to have extra chance for multiple harvesting
+                    // set extra yields field to false
+                    if (totalExtraYieldCrops <= 0)
                     {
                         item["cropData"][6] = "false";
                     }
                     else
                     {
-                        //if coffee bean, leave default yield values but update seed price to match minimum yield chance (4)
-                        if(seedIdx == "433")
+                        //balance out values to allow low-price crops to get extra yields, and higher-priced ones to not get them at all
+                        var cropSellPrice = int.Parse(item["cropObjData"][1]);
+                        var maxAllowedHarvest = 1;
+                        var extraYieldChancePercentageMax = 5;
+                        if (cropSellPrice <= 50)
                         {
-                            item["cropObjData"][1] = (int.Parse(item["cropObjData"][1]) / 4).ToString();
-                        } else
-                        {
-                            //balance out values to allow low-price crops to get extra yields, and higher-priced ones to not get them at all
-                            var cropSellPrice = int.Parse(item["cropObjData"][1]);
-                            var maxAllowedHarvest = 1;
-                            var extraYieldChancePercentageMax = 5;
-                            if (cropSellPrice <= 50)
-                            {
-                                maxAllowedHarvest = 3;
-                                extraYieldChancePercentageMax = 24;
-                            }
-                            else if (cropSellPrice > 50 && cropSellPrice <= 125)
-                            {
-                                maxAllowedHarvest = 2;
-                                extraYieldChancePercentageMax = 16;
-                            }
-                            else if (cropSellPrice > 125 && cropSellPrice <= 150)
-                            {
-                                maxAllowedHarvest = 2;
-                                extraYieldChancePercentageMax = 8;
-                            }
-                            var minYieldHarvest = Helpers.GetRandomIntegerInRange(1, maxAllowedHarvest);
-                            var maxYieldHarvest = Helpers.GetRandomIntegerInRange(minYieldHarvest, maxAllowedHarvest);
-                            var chanceForExtraCrops = Helpers.GetRandomIntegerInRange(2, extraYieldChancePercentageMax) * 0.01;
-                            item["cropData"][6] = $"true {minYieldHarvest} {maxYieldHarvest} 0 {chanceForExtraCrops}";
-
-                            //reduce crop sell price due to extra yield chance
-                            item["cropObjData"][1] = Math.Ceiling(int.Parse(item["cropObjData"][1]) * (1 - (chanceForExtraCrops * (minYieldHarvest - 1)))).ToString();
-
-                            Monitor.Log($"** EXTRA YIELD **", LogLevel.Debug);
-                            Monitor.Log($"{item["cropData"][6]}", LogLevel.Debug);
-                            Monitor.Log($"updated crop sell price: {item["cropObjData"][1]}", LogLevel.Debug);
-                            totalExtraYieldCrops--;
+                            maxAllowedHarvest = 3;
+                            extraYieldChancePercentageMax = 24;
                         }
+                        else if (cropSellPrice > 50 && cropSellPrice <= 125)
+                        {
+                            maxAllowedHarvest = 2;
+                            extraYieldChancePercentageMax = 16;
+                        }
+                        else if (cropSellPrice > 125 && cropSellPrice <= 150)
+                        {
+                            maxAllowedHarvest = 2;
+                            extraYieldChancePercentageMax = 8;
+                        }
+                        var minYieldHarvest = Helpers.GetRandomIntegerInRange(1, maxAllowedHarvest);
+                        var maxYieldHarvest = Helpers.GetRandomIntegerInRange(minYieldHarvest, maxAllowedHarvest);
+                        var chanceForExtraCrops = Helpers.GetRandomIntegerInRange(2, extraYieldChancePercentageMax) * 0.01;
+                        item["cropData"][6] = $"true {minYieldHarvest} {maxYieldHarvest} 0 {chanceForExtraCrops}";
 
-                
+                        //reduce crop sell price due to extra yield chance
+                        item["cropObjData"][1] = Math.Ceiling(int.Parse(item["cropObjData"][1]) * (1 - (chanceForExtraCrops * (minYieldHarvest - 1)))).ToString();
+
+                        Monitor.Log($"** EXTRA YIELD **", LogLevel.Debug);
+                        Monitor.Log($"{item["cropData"][6]}", LogLevel.Debug);
+                        Monitor.Log($"updated crop sell price: {item["cropObjData"][1]}", LogLevel.Debug);
+                        totalExtraYieldCrops--;
                     }
 
                     //Update artisan good prices to match new crop/seed prices if price of artisan good not dependent on crop price values (coffee, pale ale, etc)
                     //Hops Seeds
-                    if (seedIdx == "302")
+                    if (seedIdx == 302)
                     {
                         //303 -> Pale Ale
-                        setArtisanGoodPrice("303");
+                        setArtisanGoodPrice(303);
                     }
                     //Wheat Seeds
-                    if (seedIdx == "483")
+                    if (seedIdx == 483)
                     {
                         //346 -> Beer
-                        setArtisanGoodPrice("346");
+                        setArtisanGoodPrice(346);
                     }
                     //Coffee Bean
-                    if (seedIdx == "433")
+                    if (seedIdx == 433)
                     {
+                        //update coffee to regrow and update price to match extra yields
+                        var regrowthPercentage = Helpers.GetRandomIntegerInRange(30, 50);
+                        item["cropData"][4] = Math.Ceiling(totalGrowthTime * (regrowthPercentage * 0.01)).ToString();
+                        item["cropData"][6] = "true 4 4 0 .02";
+                        item["cropObjData"][1] = (int.Parse(item["cropObjData"][1]) / 4).ToString();
+
+
                         //395 -> Coffee
-                        setArtisanGoodPrice("395");
+                        setArtisanGoodPrice(395);
                     }
                     //Tea Sapling
-                    if (seedIdx == "251")
+                    if (seedIdx == 251)
                     {
                         //614 -> Green Tea
-                        setArtisanGoodPrice("614");
+                        setArtisanGoodPrice(614);
                     }
 
-                    //calculates and prints out gold per day/month per plot (for debugging and logging)
-                    //{
-                    //    double maxHarvests = 1;
-                    //    double extraSeedPurchaseMultiplier = 1;
-                    //    double sellPricePerHarvest = int.Parse(item["cropObjData"][1]);
-                    //    double seedPurchasePrice = int.Parse(item["seedObjData"][1]);
-                    //    double daysToRegrow = int.Parse(item["cropData"][4]);
-                    //    double daysToMaturity = item["cropData"][0].Split(' ').Select(day => int.Parse(day)).Aggregate(0, (total, next) => total + next);
-                    //    double growingDays = 1;
-                    //    var extraYieldsVal = item["cropData"][6];
-
-                    //    //if regrow capable
-                    //    if (int.Parse(item["cropData"][4]) > -1) {
-                    //        maxHarvests = Math.Floor((27 - daysToMaturity) / daysToRegrow + 1);
-                    //        growingDays = daysToMaturity + (maxHarvests - 1) * daysToRegrow;
-                    //    } else {
-                    //        maxHarvests = Math.Floor(27 / daysToMaturity);
-                    //        extraSeedPurchaseMultiplier = maxHarvests;
-                    //        growingDays = daysToMaturity + (maxHarvests - 1) * daysToMaturity;
-                    //    }
-
-                    //    //if crop has extra yield potential
-                    //    if (extraYieldsVal.Length > 6) {
-                    //        sellPricePerHarvest *= int.Parse(extraYieldsVal.Split(' ')[1]);
-                    //    }
-
-                    //    Monitor.Log($"days to maturity: {daysToMaturity}", LogLevel.Debug);
-                    //    Monitor.Log($"max harvests: {maxHarvests}", LogLevel.Debug);
-                    //    Monitor.Log($"days to regrow: {daysToRegrow}", LogLevel.Debug);
-                    //    var goldPerDay = (maxHarvests * sellPricePerHarvest - seedPurchasePrice * extraSeedPurchaseMultiplier) / growingDays;
-                    //    Monitor.Log($"Gold per day (per plot): {Math.Round(goldPerDay, 2)}g", LogLevel.Debug);
-                    //    Monitor.Log($"Gold per season (per plot): {Math.Round(goldPerDay * 27, 2)}g", LogLevel.Debug);
-                    //}
-
                     //join arrays and update crop and object data
-                    cropAndObjectData.CropData[seedIdx] = string.Join('/', item["cropData"]);
-                    cropAndObjectData.ObjectData[seedIdx] = string.Join('/', item["seedObjData"]);
-                    cropAndObjectData.ObjectData[objIdx] = string.Join('/', item["cropObjData"]);
+                    cropData[seedIdx] = string.Join('/', item["cropData"]);
+                    objectData[seedIdx] = string.Join('/', item["seedObjData"]);
+                    objectData[objIdx] = string.Join('/', item["cropObjData"]);
                     Monitor.Log("----------------------", LogLevel.Debug);
 
                     //calculation helper functions
@@ -404,14 +425,14 @@ namespace DynamicCrops
                         //if more crops are allowed to be given regrowth capabilities, set regrowth time to be between 30% - 50% of total grow time.
                         var regrowthPercentage = Helpers.GetRandomIntegerInRange(30, 50);
                         var regrowthTime = Math.Ceiling(totalGrowthTime * (regrowthPercentage * 0.01));
-                        //item["cropData"][4]
+                        item["cropData"][4] = regrowthTime.ToString();
                         Monitor.Log($"regrowth: {regrowthTime} days", LogLevel.Debug);
 
                         //set crop and seed sell prices
                         var seedPriceMultiplier = Helpers.GetRandomIntegerInRange(regrowSeedGPDMultiplierMin, regrowSeedGPDMultiplierMax);
                         var cropPriceMultiplier = Helpers.GetRandomIntegerInRange(regrowCropGPDMultiplierMin, regrowCropGPDMultiplierMax);
-                        item["seedObjData"][1] = (totalGrowthTime * seedPriceMultiplier).ToString();
-                        item["cropObjData"][1] = (totalGrowthTime * cropPriceMultiplier).ToString();
+                        item["seedObjData"][1] = getSellPrice(seedPriceMultiplier, false);
+                        item["cropObjData"][1] = getSellPrice(cropPriceMultiplier, true);
                         Monitor.Log($"seed price multiplier: {seedPriceMultiplier}", LogLevel.Debug);
                         Monitor.Log($"crop price multiplier: {cropPriceMultiplier}", LogLevel.Debug);
                         Monitor.Log($"seed purchase price: {item["seedObjData"][1]}g", LogLevel.Debug);
@@ -432,8 +453,8 @@ namespace DynamicCrops
                         //set crop and seed sell prices
                         var seedPriceMultiplier = Helpers.GetRandomIntegerInRange(regularSeedGPDMultiplierMin, regularSeedGPDMultiplierMax);
                         var cropPriceMultiplier = Helpers.GetRandomIntegerInRange(regularCropGPDMultiplierMin, regularCropGPDMultiplierMax);
-                        item["seedObjData"][1] = (totalGrowthTime * seedPriceMultiplier).ToString();
-                        item["cropObjData"][1] = (totalGrowthTime * cropPriceMultiplier).ToString();
+                        item["seedObjData"][1] = getSellPrice(seedPriceMultiplier, false);
+                        item["cropObjData"][1] = getSellPrice(cropPriceMultiplier, true);
                         Monitor.Log($"seed price multiplier: {seedPriceMultiplier}", LogLevel.Debug);
                         Monitor.Log($"crop price multiplier: {cropPriceMultiplier}", LogLevel.Debug);
                         Monitor.Log($"seed purchase price: {item["seedObjData"][1]}g", LogLevel.Debug);
@@ -443,15 +464,35 @@ namespace DynamicCrops
                         seedDescription += '.';
                     }
 
-                    void setArtisanGoodPrice(string objId)
+                    void setArtisanGoodPrice(int objId)
                     {
-                        var artisanObjArr = cropAndObjectData.ObjectData[objId].Split('/');
+                        var artisanObjArr = objectData[objId].Split('/');
                         artisanObjArr[1] = (int.Parse(item["cropObjData"][1]) * (int)(Helpers.GetRandomIntegerInRange(115, 140) * 0.01)).ToString();
-                        cropAndObjectData.ObjectData[objId] = string.Join('/', artisanObjArr);
+                        objectData[objId] = string.Join('/', artisanObjArr);
+                    }
+
+                    string getSellPrice(double priceMultiplier, bool isCrop)
+                    {
+                        var sellPrice = totalGrowthTime * priceMultiplier;
+
+                        //if handling crop sell price, provide incentive for investing in longer term crops by applying an additional multiplier
+                        if (isCrop)
+                        {
+                            if (totalGrowthTime > growthRangeShortMax && totalGrowthTime < growthRangeLongMin)
+                            {
+                                sellPrice *= mediumSellPriceMultiplier;
+                            }
+                            else if (totalGrowthTime > growthRangeMediumMax)
+                            {
+                                sellPrice *= longSellPriceMultiplier;
+                            }
+                        }
+
+                        return Convert.ToInt32(sellPrice).ToString();
                     }
                 }
             }
-            return cropAndObjectData;
+            return new ModData { CropData = cropData, ObjectData = objectData };
         }
     }
 }
