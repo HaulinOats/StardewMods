@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using GenericModConfigMenu;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MoreLinq;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewValley.Menus;
+using SObject = StardewValley.Object;
 
 namespace DynamicCrops
 {
@@ -15,6 +16,7 @@ namespace DynamicCrops
     {
         private ModConfig Config;
         private ModData cropsAndObjectData;
+        private string[] saplingNames = { "Cherry Sapling", "Apricot Sapling", "Orange Sapling", "Peach Sapling", "Pomegranate Sapling", "Apple Sapling", "Mango Sapling", "Banana Sapling" };
         /*********
         ** Public methods
         *********/
@@ -31,6 +33,7 @@ namespace DynamicCrops
             helper.Events.Content.AssetRequested += OnAssetRequested;
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
+            helper.Events.Display.MenuChanged += OnMenuChanged;
         }
 
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
@@ -63,8 +66,9 @@ namespace DynamicCrops
                         var data = asset.AsDictionary<int, string>().Data;
                         foreach (var (item, value) in cropsAndObjectData.CropData)
                         {
-                            Monitor.Log($"{item}:{value}", LogLevel.Debug);
+                            //Monitor.Log($"{item}:{value}", LogLevel.Debug);
                             data[item] = value;
+                            
                         }
                     }, AssetEditPriority.Late);
                     Monitor.Log("crop data loaded", LogLevel.Debug);
@@ -77,7 +81,7 @@ namespace DynamicCrops
                         var data = asset.AsDictionary<int, string>().Data;
                         foreach (var (item, value) in cropsAndObjectData.ObjectData)
                         {
-                            Monitor.Log($"{item}:{value}", LogLevel.Debug);
+                            //Monitor.Log($"{item}:{value}", LogLevel.Debug);
                             data[item] = value;
                         }
                     }, AssetEditPriority.Late);
@@ -91,6 +95,25 @@ namespace DynamicCrops
                         targetTexture.PatchImage(sourceTexture);
                     });
                 }
+            }
+        }
+
+        private void OnMenuChanged(object sender, MenuChangedEventArgs e)
+        {
+            if (e.NewMenu is not ShopMenu shopMenu) return;
+
+            Monitor.Log("entering shop menu...", LogLevel.Debug);
+
+            foreach (var (item, value) in shopMenu.itemPriceAndStock)
+            {
+                Monitor.Log($"pre update:{item.DisplayName} ({item.Name}) -> {shopMenu.itemPriceAndStock[item][0]}", LogLevel.Debug);
+                if (item is SObject { Category: SObject.SeedsCategory } && !saplingNames.Contains(item.Name) && cropsAndObjectData.SeedPrices.ContainsKey(item.Name))
+                {
+                    var seedPrice = cropsAndObjectData.SeedPrices[item.Name];
+                    shopMenu.itemPriceAndStock[item][0] = seedPrice;
+                    Monitor.Log($"{item.Name} price set to {seedPrice}", LogLevel.Debug);
+                }
+
             }
         }
 
@@ -133,12 +156,17 @@ namespace DynamicCrops
             );
         }
 
-        public static ModData initUtility(ModConfig config, StardewModdingAPI.IMonitor Monitor, IModHelper helper)
+        private ModData initUtility(ModConfig config, StardewModdingAPI.IMonitor Monitor, IModHelper helper)
         {
             var cropData = new Dictionary<int, string>();
             var objectData = new Dictionary<int, string>();
+            var seedPrices = new Dictionary<string, int>();
             var flowerSeedIndexes = new int[] { 425, 427, 429, 453, 455, 431 };
             var vanillaCropIndexes = new int[] { 273, 299, 301, 302, 347, 425, 427, 429, 431, 433, 453, 455, 472, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 499, 745, 802, 831, 833 };
+            string[] categoryValues = { "-74", "-75", "-79", "-80" };
+            //int[] modifiedArtisanGoodIds = { 303, 346, 395, 614 };
+            int[] ignoreIds = { 885, 495, 496, 497, 498, 1720, 3075 };
+            int[] includeIds = { 347, 303, 346, 395, 614, 417, 829 };
             var seasonCrops = new Dictionary<string, List<int>>
             {
                 { "spring", new List<int>() },
@@ -156,14 +184,14 @@ namespace DynamicCrops
             var growthRangeLongMax = 25;
 
             //crop seed and price range gold per day multipliers
-            var regularSeedGPDMultiplierMin = 2;
-            var regularSeedGPDMultiplierMax = 5;
-            var regularCropGPDMultiplierMin = 10;
-            var regularCropGPDMultiplierMax = 15;
-            var regrowSeedGPDMultiplierMin = 4;
-            var regrowSeedGPDMultiplierMax = 7;
-            var regrowCropGPDMultiplierMin = 8;
-            var regrowCropGPDMultiplierMax = 11;
+            var regularSeedGPDMultiplierMin = 6;
+            var regularSeedGPDMultiplierMax = 8;
+            var regularCropGPDMultiplierMin = 12;
+            var regularCropGPDMultiplierMax = 16;
+            var regrowSeedGPDMultiplierMin = 8;
+            var regrowSeedGPDMultiplierMax = 10;
+            var regrowCropGPDMultiplierMin = 11;
+            var regrowCropGPDMultiplierMax = 13;
             var mediumSellPriceMultiplier = 1.1;
             var longSellPriceMultiplier = 1.2;
 
@@ -171,33 +199,42 @@ namespace DynamicCrops
             Monitor.Log($"Growth range (Medium): {growthRangeMediumMin} - {growthRangeMediumMax}", LogLevel.Debug);
             Monitor.Log($"Growth range (Long): {growthRangeLongMin} - {growthRangeLongMax}", LogLevel.Debug);
 
-            //get crop and seed/crop related objects for modification
-            string[] categoryStrings = { "Basic", "Seeds", "Vegetable", "Fruit", "Flower" };
-            int[] modifiedArtisanGoodIds = { 303, 346, 395, 614 };
-
+            Monitor.Log($"building crop data...", LogLevel.Debug);
             foreach (var (key, value) in helper.GameContent.Load<Dictionary<int, string>>("Data/Crops"))
             {
-                //Monitor.Log($"{key}:{value}", LogLevel.Debug);
-                if(config.onlyAffectBaseCrops)
+                if (!ignoreIds.Contains(key) || includeIds.Contains(key))
                 {
-                    if(key < 931)
+                    if (config.onlyAffectBaseCrops && vanillaCropIndexes.Contains(key))
                     {
+                        //Monitor.Log($"{key}: {value}", LogLevel.Debug);
+                        cropData.TryAdd(key, value);
+                    } else
+                    {
+                        //Monitor.Log($"{key}: {value}", LogLevel.Debug);
                         cropData.TryAdd(key, value);
                     }
-                } else
-                {
-                    cropData.TryAdd(key, value);
                 }
             }
+
+            Monitor.Log($"building object data...", LogLevel.Debug);
             foreach (var (key, value) in helper.GameContent.Load<Dictionary<int, string>>("Data/ObjectInformation"))
             {
-                var objectArr = value.Split('/');
-                var categoryArr = objectArr[3].Split(' ');
-                //Monitor.Log($"{key}:{value}", LogLevel.Debug);
-                //ignore 1720 - Dummy Object
-                if (((categoryStrings.Contains(categoryArr[0]) && categoryArr.Length > 1) || modifiedArtisanGoodIds.Contains(key)) && key != 1720)
+                if (!ignoreIds.Contains(key) || includeIds.Contains(key))
                 {
-                    objectData.TryAdd(key, value);
+                    var objectArr = value.Split('/');
+                    var categoryArr = objectArr[3].Split(' ');
+
+                    //ignore 1720 - Dummy Object
+                    if (categoryArr.Length > 1 && categoryValues.Contains(categoryArr[1]))
+                    {
+                        //Monitor.Log($"{key}: {value}", LogLevel.Debug);
+                        objectData.TryAdd(key, value);
+                    }
+                    else if (includeIds.Contains(key))
+                    {
+                        //Monitor.Log($"{key}: {value}", LogLevel.Debug);
+                        objectData.TryAdd(key, value);
+                    }
                 }
             }
 
@@ -251,14 +288,23 @@ namespace DynamicCrops
                 {
                     var seedIdx = seasonCropPool[seasonCropIdx];
                     var objIdx = int.Parse(cropData[seedIdx].Split('/')[3]);
-                    Monitor.Log($"seedIdx: {seedIdx}", LogLevel.Debug);
-                    Monitor.Log($"objIdx: {objIdx}", LogLevel.Debug);
+                    var isRegrowthCapableModCrop = false;
                     var item = new Dictionary<string, string[]>
                     {
                         { "cropData", cropData[seedIdx].Split('/') },
                         { "seedObjData", objectData[seedIdx].Split('/') },
                         { "cropObjData", objectData[objIdx].Split('/') },
                     };
+                    Monitor.Log($"crop name: {item["cropObjData"][0]}", LogLevel.Debug);
+                    Monitor.Log($"seed name: {item["seedObjData"][0]}", LogLevel.Debug);
+                    Monitor.Log($"seedIdx: {seedIdx}", LogLevel.Debug);
+                    Monitor.Log($"objIdx: {objIdx}", LogLevel.Debug);
+
+                    //if crop was added from mod and is capable of regrowing
+                    if (!vanillaCropIndexes.Contains(seedIdx) && item["cropData"][4] != "-1")
+                    {
+                        isRegrowthCapableModCrop = true;
+                    }
 
                     //generate random growth (harvest) times for different crops
                     //manually set Parsnip to be a short-term crop since it's the only crop
@@ -325,7 +371,7 @@ namespace DynamicCrops
                     Monitor.Log($"is flower: {config.flowersCanRegrow}", LogLevel.Debug);
 
                     //if more crops can be given regrowth capability and aren't long-term crops, or is a trellis crop , apply regrowth values
-                    if ((totalRegrowthCrops > 0 && totalGrowthTime < growthRangeLongMin) && vanillaCropIndexes.Contains(seedIdx) || isTrellisCrop) applyRegrowValues();
+                    if (((totalRegrowthCrops > 0 && totalGrowthTime < growthRangeLongMin)) || isTrellisCrop) applyRegrowValues();
                     else applyRegularValues();
 
                     //store updated description
@@ -416,7 +462,8 @@ namespace DynamicCrops
                     void applyRegrowValues()
                     {
                         //if flower but flowers aren't allowed to regrow, exit regrowth function and apply regular values to flower instead
-                        if (isFlower && !config.flowersCanRegrow)
+                        //or if added crop doesn't have regrowth capability (no regrowth sprite)
+                        if ((isFlower && !config.flowersCanRegrow) || !isRegrowthCapableModCrop)
                         {
                             applyRegularValues();
                             return;
@@ -432,6 +479,7 @@ namespace DynamicCrops
                         var seedPriceMultiplier = Helpers.GetRandomIntegerInRange(regrowSeedGPDMultiplierMin, regrowSeedGPDMultiplierMax);
                         var cropPriceMultiplier = Helpers.GetRandomIntegerInRange(regrowCropGPDMultiplierMin, regrowCropGPDMultiplierMax);
                         item["seedObjData"][1] = getSellPrice(seedPriceMultiplier, false);
+                        seedPrices.TryAdd(item["seedObjData"][0], int.Parse(item["seedObjData"][1]));
                         item["cropObjData"][1] = getSellPrice(cropPriceMultiplier, true);
                         Monitor.Log($"seed price multiplier: {seedPriceMultiplier}", LogLevel.Debug);
                         Monitor.Log($"crop price multiplier: {cropPriceMultiplier}", LogLevel.Debug);
@@ -454,6 +502,7 @@ namespace DynamicCrops
                         var seedPriceMultiplier = Helpers.GetRandomIntegerInRange(regularSeedGPDMultiplierMin, regularSeedGPDMultiplierMax);
                         var cropPriceMultiplier = Helpers.GetRandomIntegerInRange(regularCropGPDMultiplierMin, regularCropGPDMultiplierMax);
                         item["seedObjData"][1] = getSellPrice(seedPriceMultiplier, false);
+                        seedPrices.TryAdd(item["seedObjData"][0], int.Parse(item["seedObjData"][1]));
                         item["cropObjData"][1] = getSellPrice(cropPriceMultiplier, true);
                         Monitor.Log($"seed price multiplier: {seedPriceMultiplier}", LogLevel.Debug);
                         Monitor.Log($"crop price multiplier: {cropPriceMultiplier}", LogLevel.Debug);
@@ -492,7 +541,7 @@ namespace DynamicCrops
                     }
                 }
             }
-            return new ModData { CropData = cropData, ObjectData = objectData };
+            return new ModData { CropData = cropData, ObjectData = objectData, SeedPrices = seedPrices };
         }
     }
 }

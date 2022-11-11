@@ -3,7 +3,6 @@
   "Description": "Convert minerals, ore, and monster loot into farmable seeds!",
   "Price": 100,
   "ProvidesLight": true,
-  "CanPurchase": false,
   "Recipe": {
     "ResultCount": 1,
     "Ingredients": [

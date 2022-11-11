@@ -2,7 +2,7 @@
   {
     "ProducerName": "Mixed Seed Kiln",
     "InputIdentifier": "Wood",
-    "InputStack": 15,
+    "InputStack": 30,
     "MinutesUntilReady": 20,
     "OutputIdentifier": "Mixed Seeds",
     "Sounds": ["Ship"]
@@ -10,7 +10,7 @@
   {
     "ProducerName": "Mixed Seed Kiln",
     "InputIdentifier": "Stone",
-    "InputStack": 15,
+    "InputStack": 30,
     "MinutesUntilReady": 20,
     "OutputIdentifier": "Mixed Seeds",
     "Sounds": ["Ship"]
@@ -18,7 +18,15 @@
   {
     "ProducerName": "Mixed Seed Kiln",
     "InputIdentifier": "Fiber",
-    "InputStack": 15,
+    "InputStack": 30,
+    "MinutesUntilReady": 20,
+    "OutputIdentifier": "Mixed Seeds",
+    "Sounds": ["Ship"]
+  },
+  {
+    "ProducerName": "Mixed Seed Kiln",
+    "InputIdentifier": "Sap",
+    "InputStack": 30,
     "MinutesUntilReady": 20,
     "OutputIdentifier": "Mixed Seeds",
     "Sounds": ["Ship"]

@@ -1,7 +1,7 @@
 {
   "Name": "[JA] Mixed Seed Kiln",
   "Author": "HaulinOats",
-  "Version": "1.0.2",
+  "Version": "1.0.4",
   "Description": "Convert stone, fiber, or wood into mixed seed.",
   "UniqueID": "HaulinOats.MixedSeedKilnJA",
   "UpdateKeys": ["Nexus:13886"],

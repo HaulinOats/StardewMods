@@ -1,0 +1,9 @@
+﻿{
+  "Name": "Water Balloon",
+  "Author": "HaulinOats",
+  "Version": "1.0.0",
+  "Description": "Use a water balloon to water your crops.",
+  "UniqueID": "HaulinOats.WaterBalloon",
+  "UpdateKeys": [],
+  "EntryDll": "WaterBalloon.dll"
+}

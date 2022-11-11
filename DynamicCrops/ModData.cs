@@ -9,6 +9,7 @@ namespace DynamicCrops
         public Dictionary<int, string> CropData { get; set; }
         //[0]English Name/[1]Sell Price (Seed Cost)/[2]Edibility/[3]Seed Category/[4]Display Name/[5]Description
         public Dictionary<int, string> ObjectData { get; set; }
+        public Dictionary<string, int> SeedPrices { get; set; }
     }
 }
 

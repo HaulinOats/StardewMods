@@ -2,7 +2,7 @@
   "Name": "[PFM] Mixed Seed Kiln",
   "Author": "HaulinOats",
   "Description": "Adds machine recipes for the Mixed Seed Kiln",
-  "Version": "1.0.2",
+  "Version": "1.0.4",
   "UniqueID": "HaulinOats.MixedSeedKilnPFM",
   "UpdateKeys": ["Nexus:13886"],
   "ContentPackFor": {

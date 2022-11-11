@@ -3,7 +3,6 @@
   "Description": "Converts various fish and crustaceans into farmable seeds!",
   "Price": 100,
   "ProvidesLight": false,
-  "CanPurchase": false,
   "Recipe": {
     "ResultCount": 1,
     "Ingredients": [
