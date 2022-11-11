@@ -46,7 +46,7 @@ namespace WaterBalloon
             Monitor.Log("save file loaded for Water Balloon mod", LogLevel.Debug);
             if (JsonAssets != null)
             {
-                int testID = JsonAssets.GetObjectId("Aloe");
+                int testID = JsonAssets.GetObjectId("Water Balloon");
 
                 if (testID == -1)
                 {
