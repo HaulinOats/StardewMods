@@ -1,8 +1,13 @@
 ﻿
 
+using System.Collections.Generic;
 using System.IO;
+using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
+using StardewValley;
+using StardewValley.TerrainFeatures;
+using xTile.Dimensions;
 
 namespace WaterBalloon
 {
@@ -15,6 +20,7 @@ namespace WaterBalloon
     public class ModEntry : StardewModdingAPI.Mod
     {
         private IJsonAssetsApi JsonAssets;
+        private int WaterBalloonID = -1;
         /*********
         ** Public methods
         *********/
@@ -24,7 +30,7 @@ namespace WaterBalloon
         {
             helper.Events.GameLoop.GameLaunched += OnGameLaunched;
             helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
-            //helper.Events.Input.ButtonPressed += OnButtonPressed;
+            helper.Events.Input.ButtonPressed += OnButtonPressed;
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -43,35 +49,28 @@ namespace WaterBalloon
 
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            Monitor.Log("save file loaded for Water Balloon mod", LogLevel.Debug);
-            if (JsonAssets != null)
-            {
-                int testID = JsonAssets.GetObjectId("Water Balloon");
-
-                if (testID == -1)
-                {
-                    Monitor.Log("Can't get ID for Test item. Some functionality will be lost.", LogLevel.Debug);
-                }
-                else
-                {
-                    Monitor.Log($"Test item ID is {testID}.", LogLevel.Debug);
-                }
-            }
+            WaterBalloonID = JsonAssets.GetObjectId("Water Balloon");
         }
 
-        //private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
-        //{
-        //    if (e.Button == SButton.MouseLeft || e.Button == SButton.ControllerA)
-        //    {
-        //        // The normal interact button was pressed.
-        //        if (Game1.player.CurrentItem != null)
-        //        {
-        //            if (Game1.player.CurrentItem.Name.Equals(""))
-        //            {
-        //                // Do thing.
-        //            }
-        //        }
-        //    }
-        //}
+        private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
+        {
+            //if activating the item and Water Balloon item exists water 3 tiles out from the player
+            if ((e.Button == SButton.MouseLeft || e.Button == SButton.ControllerA) && (Game1.player.CurrentItem.Name.Equals("Water Balloon") && WaterBalloonID != -1))
+            {
+                const int radius = 2;
+                GameLocation location = Game1.currentLocation;
+                Point tile = Game1.player.getTileLocationPoint();
+                for (int y = tile.Y - radius; y < tile.Y + radius + 1; y++)
+                {
+                    for (int x = tile.X - radius; x < tile.X + radius + 1; x++)
+                    {
+                        if (location.terrainFeatures.TryGetValue(new Vector2(x, y), out TerrainFeature feature) && feature is HoeDirt dirt)
+                            dirt.state.Value = HoeDirt.watered;
+                    }
+                }
+                Game1.player.reduceActiveItemByOne();
+                Game1.playSound("wateringCan");
+            }
+        }
     }
 }

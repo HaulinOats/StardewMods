@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaterBalloon", "WaterBalloon\WaterBalloon.csproj", "{3A22899F-8D75-4742-8849-582811D37FBC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BreakRocksWithWeapon", "BreakRocksWithWeapon\BreakRocksWithWeapon.csproj", "{BD8D08EF-0EEB-493A-A417-7CF3F7DE3F06}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{3A22899F-8D75-4742-8849-582811D37FBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A22899F-8D75-4742-8849-582811D37FBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A22899F-8D75-4742-8849-582811D37FBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD8D08EF-0EEB-493A-A417-7CF3F7DE3F06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD8D08EF-0EEB-493A-A417-7CF3F7DE3F06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD8D08EF-0EEB-493A-A417-7CF3F7DE3F06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD8D08EF-0EEB-493A-A417-7CF3F7DE3F06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
