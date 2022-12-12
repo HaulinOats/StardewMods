@@ -1,0 +1,29 @@
+{
+  "Name": "Raretron 3000",
+  "Description": "Build rare items with more common materials",
+  "Price": 2000,
+  "ProvidesLight": true,
+  "Recipe": {
+    "ResultCount": 1,
+    "Ingredients": [
+      {
+        "Object": 390,
+        "Count": 250
+      },
+      {
+        "Object": 338,
+        "Count": 5
+      },
+      {
+        "Object": 388,
+        "Count": 250
+      },
+      {
+        "Object":382,
+        "Count":20
+      }
+    ],
+    "CanPurchase": false,
+    "IsDefault": true
+  }
+}
