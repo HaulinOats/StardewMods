@@ -1,11 +1,11 @@
 {
-  "Name": "[JA] Raretron 3000",
-  "Author": "HaulinOats",
-  "Version": "1.0.0",
-  "Description": "Build rare items with more common materials",
-  "UniqueID": "HaulinOats.Raretron3000JA",
-  "UpdateKeys": ["Nexus:14750"],
-  "ContentPackFor": {
-    "UniqueID": "spacechase0.JsonAssets"
-  }
+    "Name": "[JA] Raretron 3000",
+    "Author": "HaulinOats",
+    "Version": "1.0.3",
+    "Description": "Build rare items with more common materials",
+    "UniqueID": "HaulinOats.Raretron3000JA",
+    "UpdateKeys": ["Nexus:14750"],
+    "ContentPackFor": {
+        "UniqueID": "spacechase0.JsonAssets"
+    }
 }

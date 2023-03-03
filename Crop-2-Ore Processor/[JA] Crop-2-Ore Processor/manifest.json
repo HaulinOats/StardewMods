@@ -1,0 +1,11 @@
+{
+    "Name": "[JA] Crop-2-Ore Processor",
+    "Author": "HaulinOats",
+    "Version": "1.0.0",
+    "Description": "Convert crops into ore!",
+    "UniqueID": "HaulinOats.Crop2OreProcessorJA",
+    "UpdateKeys": ["Nexus:15725"],
+    "ContentPackFor": {
+        "UniqueID": "spacechase0.JsonAssets"
+    }
+}

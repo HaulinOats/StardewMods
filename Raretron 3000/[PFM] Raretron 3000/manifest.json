@@ -1,16 +1,17 @@
 {
-  "Name": "[PFM] Raretron 3000",
-  "Author": "HaulinOats",
-  "Description": "Build rare items with more common materials",
-  "Version": "1.0.0",
-  "UniqueID": "HaulinOats.Raretron3000PFM",
-  "ContentPackFor": {
-    "UniqueID": "DIGUS.ProducerFrameworkMod"
-  },
-  "Dependencies": [
-    {
-      "UniqueID": "HaulinOats.Raretron3000JA",
-      "IsRequired": true
-    }
-  ]
+    "Name": "[PFM] Raretron 3000",
+    "Author": "HaulinOats",
+    "Description": "Build rare items with more common materials",
+    "Version": "1.0.3",
+    "UniqueID": "HaulinOats.Raretron3000PFM",
+    "UpdateKeys": ["Nexus:14750"],
+    "ContentPackFor": {
+        "UniqueID": "DIGUS.ProducerFrameworkMod"
+    },
+    "Dependencies": [
+        {
+            "UniqueID": "HaulinOats.Raretron3000JA",
+            "IsRequired": true
+        }
+    ]
 }

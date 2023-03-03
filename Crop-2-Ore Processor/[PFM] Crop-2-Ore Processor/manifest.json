@@ -1,0 +1,11 @@
+{
+    "Name": "[PFM] Crop-2-Ore Processor",
+    "Author": "HaulinOats",
+    "Description": "Convert crops into ore!",
+    "Version": "1.0.0",
+    "UniqueID": "HaulinOats.Crop2OreProcessorPFM",
+    "UpdateKeys": ["Nexus:15725"],
+    "ContentPackFor": {
+        "UniqueID": "DIGUS.ProducerFrameworkMod"
+    }
+}

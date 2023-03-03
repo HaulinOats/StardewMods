@@ -1,0 +1,25 @@
+{
+    "Name": "Crop-2-Ore Processor",
+    "Description": "Convert crops into ore!",
+    "Price": 100,
+    "ProvidesLight": true,
+    "Recipe": {
+        "ResultCount": 1,
+        "Ingredients": [
+            {
+                "Object": 390,
+                "Count": 50
+            },
+            {
+                "Object": 382,
+                "Count": 5
+            },
+            {
+                "Object": 388,
+                "Count": 100
+            }
+        ],
+        "IsDefault": true,
+        "CanPurchase": false
+    }
+}
